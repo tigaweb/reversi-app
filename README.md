@@ -20,6 +20,14 @@ MySQL 8.0.29
 
 ## 開発環境構成
 
+docker-compose.yml
+
+### 起動
+
+```bash
+% docker compose up --build -d
+```
+
 ## 本番環境
 
 ## CI/CD
