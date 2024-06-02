@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  text-align: center;
+}
+
+.stone {
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 50%;
+  position: relative;
+}
+
+.stone::after {
+  position: absolute;
+  display: block;
+  width: 119%;
+  bottom: -5px;
+  content: "";
+  border: 0.5px solid #f9f5f5;
+}
+
+.stone::before {
+  position: absolute;
+  display: block;
+  height: 119%;
+  right: -5px;
+  content: "";
+  border: 0.5px solid #f9f5f5;
+}
+
+.light {
+  background-color: white;
+}
+
+.dark {
+  background-color: black;
+}
