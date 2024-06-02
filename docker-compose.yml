@@ -12,6 +12,8 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    tty: true # 初期構築時にコンテナを常駐させるよう一時対応
+    stdin_open: true # 初期構築時にコンテナを常駐させるよう一時対応
 
   backend:
     build:
@@ -23,6 +25,8 @@ services:
       - GO_ENV=development
     volumes:
       - ./backend:/app
+    tty: true # 初期構築時にコンテナを常駐させるよう一時対応
+    stdin_open: true # 初期構築時にコンテナを常駐させるよう一時対応
 
   db:
     image: mysql:8.0.29
