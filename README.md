@@ -28,6 +28,10 @@ docker-compose.yml
 % docker compose up --build -d
 ```
 
+アプリケーションへの[アクセス](http://localhost:3000/)
+
+`http://localhost:3000/`
+
 ## 本番環境
 
 ## CI/CD

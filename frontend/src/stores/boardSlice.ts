@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
+const apiUrl = import.meta.env.REACT_APP_API_URL;
+
 const EMPTY: number = 0;
 const DARK: number = 1;
 const LIGHT: number = 2;
@@ -30,7 +32,7 @@ export const registerTurn = createAsyncThunk(
         y,
       }
     }
-    const result = await fetch('http://localhost:3000/api/games/latest/turns', {
+    const result = await fetch(apiUrl+'games/latest/turns', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -43,7 +45,7 @@ export const registerTurn = createAsyncThunk(
       throw new Error(errorData.message || 'Something went wrong');
     };
 
-    const response = await fetch(`http://localhost:3000/api/games/latest/turns/${turnCount}`, {
+    const response = await fetch(apiUrl+`games/latest/turns/${turnCount}`, {
       method: 'GET'
     });
     return response.json();

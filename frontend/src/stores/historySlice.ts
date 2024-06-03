@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
+const apiUrl = import.meta.env.VITE_API_KEY;
 
-// TODO 対戦履歴取得のAPI実行処理を記載
 export const getGameResultHistory = createAsyncThunk(
   'data/getHistory',
   async () => {
     console.log('ASDAS');
-    const result = await fetch('http://localhost:3000/api/games/', {
+    const result = await fetch(apiUrl+'games/', {
       method: 'GET'
     });
 
