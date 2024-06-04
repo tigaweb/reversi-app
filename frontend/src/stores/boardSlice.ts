@@ -32,7 +32,7 @@ export const registerTurn = createAsyncThunk(
         y,
       }
     }
-    const result = await fetch(apiUrl+'games/latest/turns', {
+    const result = await fetch(apiUrl + 'games/latest/turns', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -45,7 +45,7 @@ export const registerTurn = createAsyncThunk(
       throw new Error(errorData.message || 'Something went wrong');
     };
 
-    const response = await fetch(apiUrl+`games/latest/turns/${turnCount}`, {
+    const response = await fetch(apiUrl + `games/latest/turns/${turnCount}`, {
       method: 'GET'
     });
     return response.json();
