@@ -12,8 +12,6 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    tty: true # 初期構築時にコンテナを常駐させるよう一時対応
-    stdin_open: true # 初期構築時にコンテナを常駐させるよう一時対応
 
   backend:
     build:
@@ -25,8 +23,9 @@ services:
       - GO_ENV=development
     volumes:
       - ./backend:/app
-    tty: true # 初期構築時にコンテナを常駐させるよう一時対応
-    stdin_open: true # 初期構築時にコンテナを常駐させるよう一時対応
+    depends_on:
+      db:
+        condition: service_healthy
 
   db:
     image: mysql:8.0.29
@@ -38,3 +37,11 @@ services:
       MYSQL_DATABASE: reversi
       MYSQL_USER: reversi
       MYSQL_PASSWORD: password
+    volumes:
+      - ./db/data:/var/lib/mysql
+      - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      interval: 10s
+      timeout: 5s
+      retries: 3

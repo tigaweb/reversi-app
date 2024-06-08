@@ -22,10 +22,18 @@ MySQL 8.0.29
 
 docker-compose.yml
 
-### 起動
+### 初期構築
+
+Docker Desktopを利用できること
 
 ```bash
 % docker compose up --build -d
+```
+
+backendコンテナにアタッチして以下を実行(dbのmigrate)
+
+```bash
+% go run migrate/migrate.go
 ```
 
 アプリケーションへの[アクセス](http://localhost:3000/)

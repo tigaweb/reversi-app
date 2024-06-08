@@ -2,4 +2,8 @@ FROM golang:1.22.3
 
 WORKDIR /app
 
-CMD ["go", "run", "migrate/migrate.go"]
+COPY scripts/init.sh /usr/local/bin/init.sh
+
+RUN chmod +x /usr/local/bin/init.sh
+
+CMD ["go", "run", "main.go"]
