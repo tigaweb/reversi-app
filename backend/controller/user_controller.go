@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	"github.com/tigaweb/reversi-app/backend/model"
 	"github.com/tigaweb/reversi-app/backend/usecase"
 )
@@ -14,6 +14,7 @@ type IUserController interface {
 	SignUp(c echo.Context) error
 	Login(c echo.Context) error
 	LogOut(c echo.Context) error
+	CsrfToken(c echo.Context) error
 }
 
 type userContoroller struct {
@@ -73,4 +74,11 @@ func (uc userContoroller) LogOut(c echo.Context) error {
 
 	c.SetCookie(cookie)
 	return c.NoContent(http.StatusOK)
+}
+
+func (uc userContoroller) CsrfToken(c echo.Context) error {
+	token := c.Get("csrf").(string)
+	return c.JSON(http.StatusOK, echo.Map{
+		"csrf_token": token,
+	})
 }
