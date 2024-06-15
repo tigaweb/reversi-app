@@ -5,7 +5,6 @@ const apiUrl = import.meta.env.VITE_API_KEY;
 export const getGameResultHistory = createAsyncThunk(
   'data/getHistory',
   async () => {
-    console.log('ASDAS');
     const result = await fetch(apiUrl + 'games/', {
       method: 'GET'
     });

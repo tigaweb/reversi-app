@@ -1,18 +1,33 @@
-import { useDispatch, useSelector } from "react-redux";
-import { RootState, AppDispatch } from './stores/store';
-import { decrease, increase } from "./stores/counterSlice";
+import { useEffect } from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import axios from 'axios'
+import { CsrfToken } from './types'
+import Game from './Game.tsx'
+import History from './History.tsx'
+import Top from './layouts/Top.tsx'
 
-const App = () => {
-  const count = useSelector((state: RootState) => state.counter.count);
-  const dispatch = useDispatch<AppDispatch>();
+const apiUrl = import.meta.env.VITE_API_KEY;
 
+function App() {
+  useEffect(() => {
+    axios.defaults.withCredentials = true
+    const getCsrfToken = async () => {
+      const { data } = await axios.get<CsrfToken>(
+        `${apiUrl}/csrf`
+      )
+      axios.defaults.headers.common['X-CSRF-Token'] = data.csrf_token
+    }
+    getCsrfToken()
+  }, [])
   return (
-    <main>
-      {count}
-      {/* {message} */}
-      <button onClick={() => dispatch(increase())}>Up</button>
-      <button onClick={() => dispatch(decrease())}>Down</button>
-    </main>
+    <BrowserRouter >
+      <Routes>
+        <Route path="/" element={<Top />} />
+        <Route path="/auth"></Route>
+        <Route path="/game" element={<Game />} />
+        <Route path="/history" element={<History />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
