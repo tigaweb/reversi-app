@@ -6,7 +6,7 @@ export type HeaderProps = {
 
 const Header = ({ title }: HeaderProps) => {
   return (
-    <header className="relative mb-8 text-2xl font-bold h-12 flex justify-center items-center">
+    <header className="relative mb-8 text-2xl font-bold h-12 flex justify-center items-center font-mono">
       <h1>{title}</h1>
       <div className='absolute right-0'>
         <Link to="/auth" className="text-white min-w-40 bg-lime-500 hover:bg-lime-800 focus:ring-4 focus:ring-lime-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">SignUp</Link>

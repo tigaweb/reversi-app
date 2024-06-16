@@ -5,6 +5,7 @@ import { CsrfToken } from './types'
 import Game from './Game.tsx'
 import History from './History.tsx'
 import Top from './layouts/Top.tsx'
+import Auth from './layouts/Auth.tsx'
 
 const apiUrl = import.meta.env.VITE_API_KEY;
 
@@ -23,7 +24,7 @@ function App() {
     <BrowserRouter >
       <Routes>
         <Route path="/" element={<Top />} />
-        <Route path="/auth"></Route>
+        <Route path="/auth" element={<Auth />} />
         <Route path="/game" element={<Game />} />
         <Route path="/history" element={<History />} />
       </Routes>
