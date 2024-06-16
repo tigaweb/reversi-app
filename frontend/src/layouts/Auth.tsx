@@ -4,13 +4,12 @@ const Auth = () => {
   const [email, setEmail] = useState('')
   const [pw, setPw] = useState('')
   const [isLogin, setIsLogin] = useState(true)
-  // const {logIn}
   return (
     <>
       <div className="pt-4 flex justify-center items-center flex-col text-gray-600 max-w-full">
         <div className="flex items-center">
           <span className="text-center text-3xl font-extrabold">
-            Todo app by React/Go(Echo)
+            Reversi app by React/Go(Echo)
           </span>
         </div>
         <h2 className="my-6">{isLogin ? 'Login' : 'Create a new account'}</h2>
