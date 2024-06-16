@@ -1,7 +1,7 @@
-import Header from './layouts/Header';
-import Board from "./layouts/Board";
+import Header from '../components/Header';
+import Board from "../components/Board";
 import { useSelector } from 'react-redux';
-import { RootState } from './stores/store';
+import { RootState } from '../stores/store';
 
 const Game = () => {
   const error = useSelector((state: RootState) => state.boardState.error);

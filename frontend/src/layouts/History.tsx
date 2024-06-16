@@ -1,7 +1,7 @@
 // import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import Header from "./layouts/Header";
-import MatchHistoryTable from './layouts/MatchHistoryTable';
+import Header from "../components/Header";
+import MatchHistoryTable from '../components/MatchHistoryTable';
 
 const History = () => {
   return (
