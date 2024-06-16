@@ -26,26 +26,27 @@ func NewUserUsecase(ur repository.IUserRepository, uv validator.IUserValidator) 
 }
 
 func (uu *userUsecase) SignUp(user model.User) (model.UserResponse, error) {
-	if err := uu.uv.UserValidate(user); err != nil {
+	if err := uu.uv.UserCreateValidate(user); err != nil {
 		return model.UserResponse{}, err
 	}
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
 	if err != nil {
 		return model.UserResponse{}, err
 	}
-	newUser := model.User{Email: user.Email, Password: string(hash)}
+	newUser := model.User{UserName: user.UserName, Email: user.Email, Password: string(hash)}
 	if err := uu.ur.CreateUser(&newUser); err != nil {
 		return model.UserResponse{}, err
 	}
 	resUser := model.UserResponse{
-		ID:    newUser.ID,
-		Email: newUser.Email,
+		ID:       newUser.ID,
+		UserName: newUser.UserName,
+		Email:    newUser.Email,
 	}
 	return resUser, nil
 }
 
 func (uu *userUsecase) Login(user model.User) (string, error) {
-	if err := uu.uv.UserValidate(user); err != nil {
+	if err := uu.uv.UserLoginValidate(user); err != nil {
 		return "", err
 	}
 	storedUser := model.User{}

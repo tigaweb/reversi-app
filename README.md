@@ -26,14 +26,24 @@ docker-compose.yml
 
 Docker Desktopを利用できること
 
+#### コンテナのビルド&起動
+
 ```bash
 % docker compose up --build -d
 ```
 
-backendコンテナにアタッチして以下を実行(dbのmigrate)
+#### DBの初期化
+
+(初回のみ)スクリプトの権限付与
 
 ```bash
-% go run migrate/migrate.go
+% ch mod +x bin/init.sh
+```
+
+初期化スクリプトの実行
+
+```bash
+% ./bin/init.sh
 ```
 
 アプリケーションへの[アクセス](http://localhost:3000/)
