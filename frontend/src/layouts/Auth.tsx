@@ -1,9 +1,13 @@
 import { useState } from "react"
+import { useLocation } from 'react-router-dom';
+
 
 const Auth = () => {
+  const [userName, setUserName] = useState('')
   const [email, setEmail] = useState('')
   const [pw, setPw] = useState('')
-  const [isLogin, setIsLogin] = useState(true)
+  const location = useLocation();
+  const { login } = location.state;
   return (
     <>
       <div className="pt-4 flex justify-center items-center flex-col text-gray-600 max-w-full">
@@ -12,8 +16,21 @@ const Auth = () => {
             Reversi app by React/Go(Echo)
           </span>
         </div>
-        <h2 className="my-6">{isLogin ? 'Login' : 'Create a new account'}</h2>
+        <h2 className="my-6">{login ? 'Login' : 'Create a new account'}</h2>
         <form>
+          {login ? '' :
+            <div>
+              <input
+                className="mb-3 px-3 text-sm py-2 border border-gray-300 w-full"
+                name="userName"
+                type="text"
+                autoFocus
+                placeholder="User Name"
+                onChange={(e) => setUserName(e.target.value)}
+                value={userName}
+              />
+            </div>
+          }
           <div>
             <input
               className="mb-3 px-3 text-sm py-2 border border-gray-300 w-full"
@@ -41,7 +58,7 @@ const Auth = () => {
               disabled={!email || !pw}
               type="submit"
             >
-              {isLogin ? 'Login' : 'Sign Up'}
+              {login ? 'Login' : 'Sign Up'}
             </button>
           </div>
         </form>
