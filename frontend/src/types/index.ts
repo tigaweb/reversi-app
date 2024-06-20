@@ -12,3 +12,11 @@ export type Credential = {
   email: string
   password: string
 }
+
+export type HeaderProps = {
+  title: string
+}
+
+export type LoginOrSignUp = {
+  login: boolean | null
+}

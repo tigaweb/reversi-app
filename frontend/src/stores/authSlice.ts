@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { SignUp, Credential } from "../types/index";
 
-const apiUrl = import.meta.env.REACT_APP_API_URL;
+// const apiUrl = import.meta.env.REACT_APP_API_URL;
+const apiUrl = import.meta.env.VITE_API_KEY;
 
 const IS_LOGIN: boolean = true;
 const NO_LOGIN: boolean = false;
@@ -9,6 +10,7 @@ const NO_LOGIN: boolean = false;
 export const signUp = createAsyncThunk(
   'data/signup',
   async (payload: SignUp) => {
+    console.log(apiUrl)
     const { user_name, email, password } = payload;
     const requestBody: SignUp = {
       user_name,
@@ -29,7 +31,7 @@ export const signUp = createAsyncThunk(
     };
 
     //TODO ユーザー作成成功したら続けてログインする
-    
+
     return result.json();
   }
 );

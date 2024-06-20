@@ -1,18 +1,10 @@
 import { Link } from 'react-router-dom'
 import { useSelector } from "react-redux"
 import { RootState } from '../stores/store'
-
-export type HeaderProps = {
-  title: string
-}
-
-export type LoginOrSignUp = {
-  login: boolean
-}
+import { HeaderProps } from '../types';
 
 const Header = ({ title }: HeaderProps) => {
   const is_login = useSelector((state: RootState) => state.authState.is_login);
-  let login : LoginOrSignUp ;
   return (
     <header className="relative mb-8 text-2xl font-bold h-12 flex justify-center items-center font-mono">
       <h1>{title}</h1>
