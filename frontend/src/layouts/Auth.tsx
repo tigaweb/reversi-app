@@ -1,13 +1,20 @@
-import { useState } from "react"
-import { useDispatch } from "react-redux";
+import { useState, useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from 'react-router-dom';
-import { AppDispatch } from "../stores/store";
-import { signUp } from "../stores/authSlice";
+import { RootState, AppDispatch } from "../stores/store";
+import { logIn, signUp } from "../stores/authSlice";
 import { LoginOrSignUp } from "../types";
-
-
+import { useNavigate } from "react-router-dom";
 
 const Auth = () => {
+  const navigate = useNavigate();
+  const is_Authenticated = useSelector((state: RootState) => state.authState.is_Authenticated);
+  const is_LogIn = useSelector((state: RootState) => state.authState.is_LogIn);
+  useEffect(() => {
+    if (is_Authenticated !== is_LogIn) {
+      navigate('/');
+    }
+  }, [is_Authenticated, is_LogIn, navigate]);
   const [userName, setUserName] = useState('')
   const [email, setEmail] = useState('')
   const [pw, setPw] = useState('')
@@ -65,15 +72,15 @@ const Auth = () => {
             {login
               ? <button
                 className="disabled:opacity-40 py-2 px-4 rounded text-white bg-indigo-600"
-                disabled={!userName || !email || !pw}
+                disabled={!email || !pw}
                 // type="submit"
-                onClick={() => dispatch(signUp({ user_name: userName, email: email, password: pw }))}
+                onClick={() => dispatch(logIn({ email: email, password: pw }))}
               >
                 Login
               </button>
               : <button
                 className="disabled:opacity-40 py-2 px-4 rounded text-white bg-indigo-600"
-                disabled={!email || !pw}
+                disabled={!userName || !email || !pw}
                 // type="submit"
                 onClick={() => dispatch(signUp({ user_name: userName, email: email, password: pw }))}
               >

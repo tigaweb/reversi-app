@@ -1,46 +1,84 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { SignUp, Credential } from "../types/index";
+import axios from 'axios';
 
-// const apiUrl = import.meta.env.REACT_APP_API_URL;
+
 const apiUrl = import.meta.env.VITE_API_KEY;
-
-const IS_LOGIN: boolean = true;
-const NO_LOGIN: boolean = false;
 
 export const signUp = createAsyncThunk(
   'data/signup',
   async (payload: SignUp) => {
-    console.log(apiUrl)
     const { user_name, email, password } = payload;
     const requestBody: SignUp = {
       user_name,
       email,
       password
     }
-    const result = await fetch(apiUrl + '/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(requestBody)
-    });
+    try {
+      const signUpResponse = await axios.post(apiUrl + '/signup', requestBody, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+      return signUpResponse.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorMessage = error.response?.data?.message || 'Something went wrong';
+        throw new Error(errorMessage);
+      }
+    }
+  }
+);
 
-    if (!result.ok) {
-      const errorData = await result.json();
-      throw new Error(errorData.message || 'Something went wrong');
-    };
+export const logIn = createAsyncThunk(
+  'data/login',
+  async (payload: Credential) => {
+    const { email, password } = payload;
+    const requestBody: Credential = {
+      email,
+      password
+    }
+    try {
+      const logInResponse = await axios.post(apiUrl + '/login', requestBody, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+      return logInResponse.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorMessage = error.response?.data?.message || 'Something went wrong';
+        throw new Error(errorMessage);
+      }
+    }
+  }
+);
 
-    //TODO ユーザー作成成功したら続けてログインする
-
-    return result.json();
+export const logOut = createAsyncThunk(
+  'data/logout',
+  async () => {
+    try {
+      const logOutResponse = await axios.post(apiUrl + '/logout', {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+      return logOutResponse.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorMessage = error.response?.data?.message || 'Something went wrong';
+        throw new Error(errorMessage);
+      }
+    }
   }
 );
 
 
 export const authSlice = createSlice({
   name: 'board',
-  initialState: { // NOTE フロントで管理する状態は、ログイン状態とユーザー名
-    is_login: NO_LOGIN,
+  initialState: {
+    is_LogIn: false,
+    is_Authenticated: false,
     user_name: '',
     error: '',
   },
@@ -50,21 +88,37 @@ export const authSlice = createSlice({
     builder
       .addCase(signUp.pending, (state) => {
         state.error = '';
-        console.log('ユーザー作成中');
       })
-      .addCase(signUp.fulfilled, (state, { payload }) => {
-        console.log(payload);
-        state.is_login = IS_LOGIN;
-        state.user_name = payload.user_name;
+      .addCase(signUp.fulfilled, (state) => {
+        state.is_Authenticated = true;
       })
       .addCase(signUp.rejected, (state, action) => {
         state.error = typeof (action.error.message) === "string" ? action.error.message : "";
         console.log(state.error);
-        console.log('失敗');
+      })
+      .addCase(logIn.pending, (state) => {
+        state.error = '';
+      })
+      .addCase(logIn.fulfilled, (state) => {
+        state.is_LogIn = true;
+        state.is_Authenticated = false;
+      })
+      .addCase(logIn.rejected, (state, action) => {
+        state.error = typeof (action.error.message) === "string" ? action.error.message : "";
+        console.log(state.error);
+      })
+      .addCase(logOut.pending, (state) => {
+        state.error = '';
+      })
+      .addCase(logOut.fulfilled, (state) => {
+        state.is_LogIn = false;
+        state.is_Authenticated = false;
+      })
+      .addCase(logOut.rejected, (state, action) => {
+        state.error = typeof (action.error.message) === "string" ? action.error.message : "";
+        console.log(state.error);
       });
   },
 });
-
-// export const { set } = boardSlice.actions;
 
 export default authSlice.reducer;

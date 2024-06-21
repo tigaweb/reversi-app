@@ -25,7 +25,7 @@ const Board = () => {
       {
         winnerDisc === null
           ? <h3>{nextDisc === 1 ? "黒" : "白"}の順番です</h3>
-          :<h3>{winnerDisc === 1 ? "黒" : "白"}の勝利です</h3>
+          : <h3>{winnerDisc === 1 ? "黒" : "白"}の勝利です</h3>
       }
       <div className='Board
         w-[30rem] m-0 m-auto mt-5 grid grid-cols-8 place-content-center place-items-center divide-solid border-0 border-t-[1px] border-l-[1px] bg-gray-300

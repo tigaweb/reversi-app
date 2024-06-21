@@ -1,22 +1,24 @@
 import { Link } from 'react-router-dom'
-import { useSelector } from "react-redux"
-import { RootState } from '../stores/store'
+import { useDispatch, useSelector } from "react-redux"
+import { RootState, AppDispatch } from "../stores/store";
 import { HeaderProps } from '../types';
+import { logOut } from '../stores/authSlice';
 
 const Header = ({ title }: HeaderProps) => {
-  const is_login = useSelector((state: RootState) => state.authState.is_login);
+  const is_LogIn = useSelector((state: RootState) => state.authState.is_LogIn);
+  const dispatch = useDispatch<AppDispatch>();
   return (
     <header className="relative mb-8 text-2xl font-bold h-12 flex justify-center items-center font-mono">
       <h1>{title}</h1>
       <div className='absolute right-0'>
-        {is_login !== true
+        {is_LogIn !== true
           ? (
             <>
               <Link
                 to={{
                   pathname: "/auth",
                 }}
-                state={{ login: false } }
+                state={{ login: false }}
                 className="text-white min-w-40 bg-lime-500 hover:bg-lime-800 focus:ring-4 focus:ring-lime-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
               >
                 SignUp
@@ -32,7 +34,13 @@ const Header = ({ title }: HeaderProps) => {
               </Link>
             </>
           )
-          : <Link to="/auth" className="text-white min-w-40 bg-rose-500 hover:bg-rose-800 focus:ring-4 focus:ring-rose-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">LogOut</Link>
+          : <Link
+            to="/"
+            className="text-white min-w-40 bg-rose-500 hover:bg-rose-800 focus:ring-4 focus:ring-rose-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+            onClick={() => dispatch(logOut())}
+          >
+            LogOut
+          </Link>
         }
       </div>
     </header>
