@@ -1,0 +1,153 @@
+openapi: '3.0.3'
+
+info:
+  title: reversi-app
+  version: 1.0.0
+
+paths:
+  /signup:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_name:
+                  type: string
+                  example: username123
+                email:
+                  type: string
+                  example: test@example.com
+                password:
+                  type: string
+                  example: P@ssw0rd
+      responses:
+        201:
+          description: User Created
+  /login:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: test@example.com
+                password:
+                  type: string
+                  example: P@ssw0rd
+      responses:
+        200:
+          description: Return JWT token
+  /logout:
+    post:
+      responses:
+        200:
+          description: Clear Cookie
+
+  /games:
+    get:
+      responses:
+        200:
+          description: Get Game History
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  games:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        WinnerUser:
+                          type: string
+                          example: winner_username
+                        WinnerDisc:
+                          type: integer
+                          example: 1
+                        LoseUser:
+                          type: string
+                          example: lose_username
+                        startedAt:
+                          type: string
+                          example: 2024-06-21T17:32:28z
+                        endAt:
+                          type: string
+                          example: 2024-06-21T17:53:52z
+    post:
+      responses:
+        200:
+          description: Start new Game
+
+  /games/latest/turns/{turnCount}:
+    parameters:
+      - name: turnCount
+        in: path
+        schema:
+          type: integer
+        required: true
+    get:
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  turnCount:
+                    type: integer
+                    example: 1
+                  board:
+                    type: array
+                    example:
+                      [
+                        [0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0],
+                        [0,0,0,1,2,0,0,0],
+                        [0,0,0,2,1,0,0,0],
+                        [0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0]
+                      ]
+                  nextDisc:
+                    type: integer
+                    example: 1
+                  WinnerDisc:
+                    type: integer
+                    example: 1
+
+  /games/latest/turns:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                turnCount:
+                  type: integer
+                  example: 1
+                move:
+                  type: object
+                  properties:
+                    disc:
+                      type: integer
+                      example: 1
+                    x:
+                      type: integer
+                      example: 1
+                    y:
+                      type: integer
+                      example: 1
+      responses:
+        201:
+          description: Created
