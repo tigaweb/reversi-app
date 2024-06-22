@@ -12,3 +12,7 @@ type Game struct {
 	CreatedBy   User      `json:"created_by" gorm:"foreignkey:CreatedByID"`
 	UpdatedAt   time.Time `json:"updated_at"`
 }
+
+type CreateGameResponse struct {
+	ID uint `json:"game_id"`
+}
