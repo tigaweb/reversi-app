@@ -10,15 +10,15 @@ type IGameUsecase interface {
 	GameHistory(user_id uint) ([]*model.GameResult, error)
 }
 
-type GameUsecase struct {
+type gameUsecase struct {
 	gr repository.IGameRepository
 }
 
 func NewGameUsecase(gr repository.IGameRepository) IGameUsecase {
-	return &GameUsecase{gr}
+	return &gameUsecase{gr}
 }
 
-func (gu *GameUsecase) NewGame(game *model.Game) (*model.CreateGameResponse, error) {
+func (gu *gameUsecase) NewGame(game *model.Game) (*model.CreateGameResponse, error) {
 	game_response := model.CreateGameResponse{}
 	if err := gu.gr.CreateGame(game); err != nil {
 		return nil, err
@@ -27,7 +27,7 @@ func (gu *GameUsecase) NewGame(game *model.Game) (*model.CreateGameResponse, err
 	return &game_response, nil
 }
 
-func (gu *GameUsecase) GameHistory(user_id uint) ([]*model.GameResult, error) {
+func (gu *gameUsecase) GameHistory(user_id uint) ([]*model.GameResult, error) {
 	var game_response []*model.GameResult
 	var err error
 	if game_response, err = gu.gr.GetGameResultByUser(user_id); err != nil {

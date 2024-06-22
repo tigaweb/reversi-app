@@ -10,22 +10,22 @@ type IGameRepository interface {
 	GetGameResultByUser(user_id uint) ([]*model.GameResult, error)
 }
 
-type GameRepository struct {
+type gameRepository struct {
 	db *gorm.DB
 }
 
 func NewGameRepository(db *gorm.DB) IGameRepository {
-	return &GameRepository{db}
+	return &gameRepository{db}
 }
 
-func (gr *GameRepository) CreateGame(game *model.Game) error {
+func (gr *gameRepository) CreateGame(game *model.Game) error {
 	if err := gr.db.Create(&game).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (gr *GameRepository) GetGameResultByUser(user_id uint) ([]*model.GameResult, error) {
+func (gr *gameRepository) GetGameResultByUser(user_id uint) ([]*model.GameResult, error) {
 	var gameResults []*model.GameResult
 	gameIDs := gr.db.Model(&model.Game{}).
 		Select("id").

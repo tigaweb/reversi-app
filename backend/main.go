@@ -14,7 +14,10 @@ func main() {
 	userRepository := repository.NewUserRepository(db)
 	userValidator := validator.NewUserValidator()
 	userUsecase := usecase.NewUserUsecase(userRepository, userValidator)
-	controller := controller.NewUserController(userUsecase)
-	e := router.NewRouter(controller)
+	userController := controller.NewUserController(userUsecase)
+	gameRepository := repository.NewGameRepository(db)
+	gameUsecase := usecase.NewGameUsecase(gameRepository)
+	gameController := controller.NewGameController(gameUsecase)
+	e := router.NewRouter(userController, gameController)
 	e.Logger.Fatal(e.Start(":8080"))
 }
