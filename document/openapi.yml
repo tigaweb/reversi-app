@@ -84,7 +84,15 @@ paths:
     post:
       responses:
         200:
-          description: Start new Game
+          description: Create new game and return game_id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  gameId:
+                    type: integer
+                    example: 1
 
   /games/latest/turns/{turnCount}:
     parameters:
@@ -133,6 +141,9 @@ paths:
             schema:
               type: object
               properties:
+                gameId:
+                  type: integer
+                  example: 1
                 turnCount:
                   type: integer
                   example: 1
