@@ -1,7 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from '../stores/store';
-import { registerTurn } from "../stores/boardSlice";
+import { registerTurn, startGame } from "../stores/boardSlice";
 import { useEffect } from "react";
+import axios from 'axios';
+
+const apiUrl = import.meta.env.VITE_API_KEY;
 
 const Board = () => {
   const board = useSelector((state: RootState) => state.boardState.board);
@@ -11,12 +14,24 @@ const Board = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    const registerGame = async () => {
-      await fetch('http://localhost:3000/api/games', {
-        method: 'POST'
-      })
+    const fetchData = async () => {
+      try {
+        const response = await axios.post(apiUrl + '/games', {}, {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        });
+        dispatch(startGame({ game_id: response.data.game_id }))
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.error("Axios error:", error.response?.data);
+        } else {
+          console.error("Unexpected error:", error);
+        }
+      }
     };
-    registerGame();
+    fetchData();
   }, []);
 
   return (

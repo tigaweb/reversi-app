@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { boardPosition, gameId, registerTurnRequestBody } from "../types/index";
 
 const apiUrl = import.meta.env.REACT_APP_API_URL;
 
@@ -6,19 +7,7 @@ const EMPTY: number = 0;
 const DARK: number = 1;
 const LIGHT: number = 2;
 
-type boardPosition = {
-  line: number,
-  squre: number,
-}
 
-type registerTurnRequestBody = {
-  turnCount: number,
-  move: {
-    disc: number,
-    x: number,
-    y: number,
-  }
-}
 
 export const registerTurn = createAsyncThunk(
   'data/placeStone',
@@ -55,7 +44,8 @@ export const registerTurn = createAsyncThunk(
 
 export const boardSlice = createSlice({
   name: 'board',
-  initialState: { // NOTE ターン数(turn_count)、次のコマの色(next_disc)も管理すべき?
+  initialState: {
+    game_id: 0,
     board: [
       [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
       [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
@@ -77,6 +67,11 @@ export const boardSlice = createSlice({
       const { line, squre }: boardPosition = payload;
       state.board[line][squre] = DARK;
     },
+    startGame: (state, { payload }) => {
+      const { game_id }: gameId = payload;
+      state.game_id = game_id;
+      console.log('game_id：',game_id)
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -102,6 +97,6 @@ export const boardSlice = createSlice({
   },
 });
 
-// export const { set } = boardSlice.actions;
+export const { set, startGame } = boardSlice.actions;
 
 export default boardSlice.reducer;

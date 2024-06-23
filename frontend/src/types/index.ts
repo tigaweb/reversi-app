@@ -20,3 +20,21 @@ export type HeaderProps = {
 export type LoginOrSignUp = {
   login: boolean | null
 }
+
+export type boardPosition = {
+  line: number,
+  squre: number,
+}
+
+export type registerTurnRequestBody = {
+  turnCount: number,
+  move: {
+    disc: number,
+    x: number,
+    y: number,
+  }
+}
+
+export type gameId = {
+  game_id: number
+}

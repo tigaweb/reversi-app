@@ -9,6 +9,7 @@ import Auth from './layouts/Auth.tsx'
 
 const apiUrl = import.meta.env.VITE_API_KEY;
 
+
 function App() {
   useEffect(() => {
     axios.defaults.withCredentials = true

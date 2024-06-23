@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { SignUp, Credential } from "../types/index";
 import axios from 'axios';
 
-
 const apiUrl = import.meta.env.VITE_API_KEY;
 
 export const signUp = createAsyncThunk(
