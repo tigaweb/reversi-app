@@ -41,6 +41,19 @@ func NewRouter(uc controller.IUserController, gc controller.IGameController) *ec
 	e.POST("/logout", uc.LogOut)
 	e.GET("/csrf", uc.CsrfToken)
 
+	c := e.Group("/check-auth")
+	c.Use(echojwt.WithConfig(echojwt.Config{
+		SigningKey:  []byte(os.Getenv("SECRET")),
+		TokenLookup: "cookie:token",
+		ErrorHandler: func(c echo.Context, err error) error {
+			return echo.NewHTTPError(http.StatusCreated, map[string]interface{}{
+				"loggedIn": false,
+				"message":  "No token provided or token is invalid",
+			})
+		},
+	}))
+	c.GET("", uc.CheckAuth)
+
 	g := e.Group("/games")
 	g.Use(echojwt.WithConfig(echojwt.Config{
 		SigningKey:  []byte(os.Getenv("SECRET")),

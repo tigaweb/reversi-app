@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { SignUp, Credential } from "../types/index";
+import { SignUp, Credential, IsLogin } from "../types/index";
 import axios from 'axios';
 
 const apiUrl = import.meta.env.VITE_API_KEY;
@@ -82,6 +82,10 @@ export const authSlice = createSlice({
     error: '',
   },
   reducers: {
+    setLoginState: (state, { payload }) => {
+      const { is_LogIn }: IsLogin = payload;
+      state.is_LogIn = is_LogIn;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -119,5 +123,7 @@ export const authSlice = createSlice({
       });
   },
 });
+
+export const { setLoginState } = authSlice.actions;
 
 export default authSlice.reducer;

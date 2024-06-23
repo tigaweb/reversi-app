@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"github.com/tigaweb/reversi-app/backend/model"
 	"github.com/tigaweb/reversi-app/backend/usecase"
@@ -15,6 +16,7 @@ type IUserController interface {
 	Login(c echo.Context) error
 	LogOut(c echo.Context) error
 	CsrfToken(c echo.Context) error
+	CheckAuth(c echo.Context) error
 }
 
 type userContoroller struct {
@@ -80,5 +82,25 @@ func (uc userContoroller) CsrfToken(c echo.Context) error {
 	token := c.Get("csrf").(string)
 	return c.JSON(http.StatusOK, echo.Map{
 		"csrf_token": token,
+	})
+}
+
+func (uc userContoroller) CheckAuth(c echo.Context) error {
+	// トークンが存在するか確認
+	user := c.Get("user")
+	if user == nil {
+		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"loggedIn": false,
+			"message":  "No token provided or token is invalid",
+		})
+	}
+	// トークンの型アサーション
+	token := user.(*jwt.Token)
+	claims := token.Claims.(jwt.MapClaims)
+	user_id := claims["user_id"].(float64)
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"loggedIn": true,
+		"user_id":  user_id,
 	})
 }

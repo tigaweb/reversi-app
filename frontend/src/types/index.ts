@@ -21,6 +21,10 @@ export type LoginOrSignUp = {
   login: boolean | null
 }
 
+export type IsLogin = {
+  is_LogIn: boolean
+}
+
 export type boardPosition = {
   line: number,
   squre: number,
