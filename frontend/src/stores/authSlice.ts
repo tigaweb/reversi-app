@@ -76,15 +76,15 @@ export const logOut = createAsyncThunk(
 export const authSlice = createSlice({
   name: 'board',
   initialState: {
-    is_LogIn: false,
+    is_login: false,
     is_Authenticated: false,
     user_name: '',
     error: '',
   },
   reducers: {
     setLoginState: (state, { payload }) => {
-      const { is_LogIn }: IsLogin = payload;
-      state.is_LogIn = is_LogIn;
+      const { is_login }: IsLogin = payload;
+      state.is_login = is_login;
     },
   },
   extraReducers: (builder) => {
@@ -103,7 +103,7 @@ export const authSlice = createSlice({
         state.error = '';
       })
       .addCase(logIn.fulfilled, (state) => {
-        state.is_LogIn = true;
+        state.is_login = true;
         state.is_Authenticated = false;
       })
       .addCase(logIn.rejected, (state, action) => {
@@ -114,7 +114,7 @@ export const authSlice = createSlice({
         state.error = '';
       })
       .addCase(logOut.fulfilled, (state) => {
-        state.is_LogIn = false;
+        state.is_login = false;
         state.is_Authenticated = false;
       })
       .addCase(logOut.rejected, (state, action) => {

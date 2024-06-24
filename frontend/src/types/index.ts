@@ -22,7 +22,7 @@ export type LoginOrSignUp = {
 }
 
 export type IsLogin = {
-  is_LogIn: boolean
+  is_login: boolean
 }
 
 export type boardPosition = {
@@ -31,7 +31,8 @@ export type boardPosition = {
 }
 
 export type registerTurnRequestBody = {
-  turnCount: number,
+  game_id: number,
+  turn_count: number,
   move: {
     disc: number,
     x: number,

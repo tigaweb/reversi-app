@@ -5,13 +5,13 @@ import { HeaderProps } from '../types';
 import { logOut } from '../stores/authSlice';
 
 const Header = ({ title }: HeaderProps) => {
-  const is_LogIn = useSelector((state: RootState) => state.authState.is_LogIn);
+  const is_login = useSelector((state: RootState) => state.authState.is_login);
   const dispatch = useDispatch<AppDispatch>();
   return (
     <header className="relative mb-8 text-2xl font-bold h-12 flex justify-center items-center font-mono">
       <h1>{title}</h1>
       <div className='absolute right-0'>
-        {is_LogIn !== true
+        {is_login !== true
           ? (
             <>
               <Link

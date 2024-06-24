@@ -90,7 +90,7 @@ func (uc userContoroller) CheckAuth(c echo.Context) error {
 	user := c.Get("user")
 	if user == nil {
 		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
-			"loggedIn": false,
+			"is_login": false,
 			"message":  "No token provided or token is invalid",
 		})
 	}
@@ -100,7 +100,7 @@ func (uc userContoroller) CheckAuth(c echo.Context) error {
 	user_id := claims["user_id"].(float64)
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"loggedIn": true,
+		"is_login": true,
 		"user_id":  user_id,
 	})
 }

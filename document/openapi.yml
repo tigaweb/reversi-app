@@ -47,6 +47,35 @@ paths:
       responses:
         200:
           description: Clear Cookie
+  /csrf:
+    get:
+      responses:
+        200:
+          description: Get Token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  csrf_token:
+                    type: string
+                    example: token
+  /check-auth:
+    get:
+      responses:
+        200:
+          description: Get Token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  is_login:
+                    type: boolean
+                    example: true
+                  user_id:
+                    type: integer
+                    example: 1
 
   /games:
     get:
@@ -66,19 +95,19 @@ paths:
                         id:
                           type: integer
                           example: 1
-                        WinnerUser:
+                        winner_user:
                           type: string
                           example: winner_username
-                        WinnerDisc:
+                        winner_disc:
                           type: integer
                           example: 1
-                        LoseUser:
+                        lose_user:
                           type: string
                           example: lose_username
-                        startedAt:
+                        started_at:
                           type: string
                           example: 2024-06-21T17:32:28z
-                        endAt:
+                        end_at:
                           type: string
                           example: 2024-06-21T17:53:52z
     post:
@@ -94,9 +123,9 @@ paths:
                     type: integer
                     example: 1
 
-  /games/latest/turns/{turnCount}:
+  /games/latest/turns/{turn_count}:
     parameters:
-      - name: turnCount
+      - name: turn_count
         in: path
         schema:
           type: integer
@@ -110,7 +139,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  turnCount:
+                  game_id:
+                    type: integer
+                    example: 1
+                  turn_count:
                     type: integer
                     example: 1
                   board:
@@ -126,10 +158,10 @@ paths:
                         [0,0,0,0,0,0,0,0],
                         [0,0,0,0,0,0,0,0]
                       ]
-                  nextDisc:
+                  next_disc:
                     type: integer
                     example: 1
-                  WinnerDisc:
+                  winner_disc:
                     type: integer
                     example: 1
 
@@ -141,10 +173,10 @@ paths:
             schema:
               type: object
               properties:
-                gameId:
+                game_id:
                   type: integer
                   example: 1
-                turnCount:
+                turn_count:
                   type: integer
                   example: 1
                 move:

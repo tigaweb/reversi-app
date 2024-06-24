@@ -47,8 +47,8 @@ func NewRouter(uc controller.IUserController, gc controller.IGameController) *ec
 		TokenLookup: "cookie:token",
 		ErrorHandler: func(c echo.Context, err error) error {
 			return echo.NewHTTPError(http.StatusCreated, map[string]interface{}{
-				"loggedIn": false,
-				"message":  "No token provided or token is invalid",
+				"is_login": false,
+				"message":  "first access",
 			})
 		},
 	}))

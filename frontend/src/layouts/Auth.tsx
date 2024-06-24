@@ -9,12 +9,12 @@ import { useNavigate } from "react-router-dom";
 const Auth = () => {
   const navigate = useNavigate();
   const is_Authenticated = useSelector((state: RootState) => state.authState.is_Authenticated);
-  const is_LogIn = useSelector((state: RootState) => state.authState.is_LogIn);
+  const is_login = useSelector((state: RootState) => state.authState.is_login);
   useEffect(() => {
-    if (is_Authenticated !== is_LogIn) {
+    if (is_Authenticated !== is_login) {
       navigate('/');
     }
-  }, [is_Authenticated, is_LogIn, navigate]);
+  }, [is_Authenticated, is_login, navigate]);
   const [userName, setUserName] = useState('')
   const [email, setEmail] = useState('')
   const [pw, setPw] = useState('')

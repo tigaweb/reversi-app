@@ -11,10 +11,11 @@ const LIGHT: number = 2;
 
 export const registerTurn = createAsyncThunk(
   'data/placeStone',
-  async (payload: { turnCount: number, disc: number, x: number, y: number }) => {
-    const { turnCount, disc, x, y } = payload;
+  async (payload: { game_id: number, turn_count: number, disc: number, x: number, y: number }) => {
+    const { game_id, turn_count, disc, x, y } = payload;
     const requestBody: registerTurnRequestBody = {
-      turnCount,
+      game_id,
+      turn_count,
       move: {
         disc,
         x,
@@ -34,7 +35,7 @@ export const registerTurn = createAsyncThunk(
       throw new Error(errorData.message || 'Something went wrong');
     };
 
-    const response = await fetch(apiUrl + `games/latest/turns/${turnCount}`, {
+    const response = await fetch(apiUrl + `games/latest/turns/${turn_count}`, {
       method: 'GET'
     });
     return response.json();
@@ -70,7 +71,7 @@ export const boardSlice = createSlice({
     startGame: (state, { payload }) => {
       const { game_id }: gameId = payload;
       state.game_id = game_id;
-      console.log('game_id：',game_id)
+      console.log('game_id：', game_id)
     }
   },
   extraReducers: (builder) => {
@@ -83,10 +84,10 @@ export const boardSlice = createSlice({
       .addCase(registerTurn.fulfilled, (state, { payload }) => {
         console.log(payload);
         state.loading = false;
-        state.turn_count = payload.turnCount;
+        state.turn_count = payload.turn_count;
         state.board = payload.board;
-        state.next_disc = payload.nextDisc;
-        state.winner_disc = payload.winnerDisc;
+        state.next_disc = payload.next_disc;
+        state.winner_disc = payload.winner_disc;
       })
       .addCase(registerTurn.rejected, (state, action) => {
         state.loading = false;
