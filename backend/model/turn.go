@@ -12,3 +12,9 @@ type Turn struct {
 	CreatedByID uint      `json:"created_by_id"`
 	CreatedBy   User      `json:"created_by" gorm:"foreignkey:created_by_id"`
 }
+
+type RegisterTurnRequest struct {
+	GameID    uint `json:"game_id"`
+	TurnCount int  `json:"turn_count"`
+	Move      Move `json:"move"`
+}

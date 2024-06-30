@@ -10,7 +10,11 @@ import (
 	"github.com/tigaweb/reversi-app/backend/controller"
 )
 
-func NewRouter(uc controller.IUserController, gc controller.IGameController) *echo.Echo {
+func NewRouter(
+	uc controller.IUserController,
+	gc controller.IGameController,
+	tc controller.ITurnController,
+) *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{
@@ -60,6 +64,8 @@ func NewRouter(uc controller.IUserController, gc controller.IGameController) *ec
 		TokenLookup: "cookie:token",
 	}))
 	g.POST("", gc.CreateGame)
+	t := g.Group("/latest/turns/")
+	t.POST("", tc.RegisterTurn)
 
 	return e
 }

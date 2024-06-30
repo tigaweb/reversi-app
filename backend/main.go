@@ -5,6 +5,7 @@ import (
 	"github.com/tigaweb/reversi-app/backend/db"
 	"github.com/tigaweb/reversi-app/backend/repository"
 	"github.com/tigaweb/reversi-app/backend/router"
+	"github.com/tigaweb/reversi-app/backend/service"
 	"github.com/tigaweb/reversi-app/backend/usecase"
 	"github.com/tigaweb/reversi-app/backend/validator"
 )
@@ -18,6 +19,8 @@ func main() {
 	gameRepository := repository.NewGameRepository(db)
 	gameUsecase := usecase.NewGameUsecase(gameRepository)
 	gameController := controller.NewGameController(gameUsecase)
-	e := router.NewRouter(userController, gameController)
+	turnService := service.NewTurnService(gameUsecase)
+	turnController := controller.NewTurnController(turnService)
+	e := router.NewRouter(userController, gameController,turnController)
 	e.Logger.Fatal(e.Start(":8080"))
 }

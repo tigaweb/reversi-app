@@ -8,6 +8,7 @@ import (
 type IGameRepository interface {
 	CreateGame(game *model.Game) error
 	GetGameResultByUser(user_id uint) ([]*model.GameResult, error)
+	FindGameRecordByGameId(game_id uint) (model.Game, error)
 }
 
 type gameRepository struct {
@@ -34,4 +35,12 @@ func (gr *gameRepository) GetGameResultByUser(user_id uint) ([]*model.GameResult
 		return nil, err
 	}
 	return gameResults, nil
+}
+
+func (gr *gameRepository) FindGameRecordByGameId(game_id uint) (model.Game, error) {
+	var game model.Game
+	if err := gr.db.Where("id=?", game_id).Preload("CreatedBy").Preload("JoinBy").First(&game).Error; err != nil {
+		return game, err
+	}
+	return game, nil
 }
