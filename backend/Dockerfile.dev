@@ -6,9 +6,13 @@ COPY scripts/init.sh /usr/local/bin/init.sh
 
 RUN chmod +x /usr/local/bin/init.sh
 
+RUN go install github.com/go-delve/delve/cmd/dlv@latest
 RUN go install github.com/air-verse/air@latest
 
 COPY go.mod go.sum ./
 RUN go mod download
 
+COPY .air.toml ./
+
 CMD ["air", "-c", ".air.toml"]
+# CMD ["air"]

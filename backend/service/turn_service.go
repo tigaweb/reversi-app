@@ -31,10 +31,7 @@ func (ts turnService) RegisterTurn(game_id uint, move model.Move) error {
 	}
 	fmt.Println("RegisterTurnの処理")
 	fmt.Println(game.ID)
-	fmt.Println(game.CreatedBy.ID)
-	fmt.Println(game.CreatedBy.Email)
-	fmt.Println(game.CreatedBy.UserName)
-	fmt.Println(game.JoinBy.UserName)
+
 	// 前回のturn_countを取得する
 
 	// moveから石が置ける場所か判定する

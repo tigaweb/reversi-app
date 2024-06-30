@@ -17,6 +17,7 @@ services:
       dockerfile: Dockerfile.dev
     ports:
       - "8080:8080"
+      - "2345:2345"     # delveデバッグ用
     environment:
       - GO_ENV=development
     volumes:
