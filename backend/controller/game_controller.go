@@ -17,10 +17,11 @@ type IGameController interface {
 
 type gameController struct {
 	gu usecase.IGameUsecase
+	tu usecase.ITurnUsecase
 }
 
-func NewGameController(gu usecase.IGameUsecase) IGameController {
-	return &gameController{gu}
+func NewGameController(gu usecase.IGameUsecase, tu usecase.ITurnUsecase) IGameController {
+	return &gameController{gu, tu}
 }
 
 func (gc *gameController) CreateGame(c echo.Context) error {
@@ -32,6 +33,8 @@ func (gc *gameController) CreateGame(c echo.Context) error {
 	game.CreatedByID = uint(userId.(float64))
 	game.JoinById = uint(userId.(float64))
 	gameRes, err := gc.gu.NewGame(&game)
+	// Game作成時、最初の盤面(Turn,Squareを作成する処理)
+	gc.tu.CreateFirstTurnAndBoardBySoloPlay(game)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
