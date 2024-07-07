@@ -9,3 +9,6 @@ type Move struct {
 	Y      int  `json:"y"`
 }
 
+type Point map[string]int
+
+type ListFlipPoints []Point
