@@ -8,6 +8,8 @@ import (
 
 type IBoardUsecase interface {
 	GetFlipPoints(move model.Move, board model.Board) (model.ListFlipPoints, error)
+	FlipDiscs(boad *model.Board, listFlipPoints model.ListFlipPoints, move model.Move) error
+	SerchCanFlipPointsByDisc(disc model.Disc, board model.Board) bool
 }
 
 type boardUsecase struct {
@@ -28,7 +30,6 @@ func (bu *boardUsecase) GetFlipPoints(move model.Move, board model.Board) (model
 	// ひっくり返せる位置の取得
 	listFlipPoints, err := listUpCanFlipPoints(move, *walledBoard)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	return *listFlipPoints, err
@@ -90,10 +91,8 @@ func listUpCanFlipPoints(move model.Move, walledBoard model.Board) (*model.ListF
 		// 隣のマスの色が違う色の場合に処理を継続する
 		for {
 			if !isOppositeDisc(model.Disc(move.Disc), walledBoard.Discs[cursorY][cursorX]) {
-				// fmt.Println("終了")
 				break
 			}
-			fmt.Println("処理が進む")
 
 			// リストに位置を追加
 			flipPoints = append(flipPoints, model.Point{
@@ -143,6 +142,39 @@ func isOppositeDisc(disc1 model.Disc, disc2 model.Disc) bool {
 	}
 	if disc1 == model.Light && disc2 == model.Dark {
 		return true
+	}
+	return false
+}
+
+func (bu *boardUsecase) FlipDiscs(boad *model.Board, listFlipPoints model.ListFlipPoints, move model.Move) error {
+	// moveの位置の色を変更
+	boad.Discs[move.Y][move.X] = model.Disc(move.Disc)
+	// listFlipPointsに存在する位置の色を変更
+	for _, point := range listFlipPoints {
+		x := point["X"]
+		y := point["Y"]
+		if y >= 0 && y < len(boad.Discs) && x >= 0 && x < len(boad.Discs[y]) {
+			boad.Discs[y][x] = model.Disc(move.Disc)
+		}
+	}
+	return nil
+}
+
+func (bu *boardUsecase) SerchCanFlipPointsByDisc(disc model.Disc, board model.Board) bool {
+	for y, discsY := range board.Discs {
+		for x, discX := range discsY {
+			if discX == model.E {
+				move := &model.Move{
+					X:    x,
+					Y:    y,
+					Disc: int(disc),
+				}
+				listFlipPoints, _ := bu.GetFlipPoints(*move, board)
+				if len(listFlipPoints) > 0 {
+					return true
+				}
+			}
+		}
 	}
 	return false
 }

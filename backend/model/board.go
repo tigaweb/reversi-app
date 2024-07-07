@@ -34,3 +34,11 @@ var INITIAL_BORD Discs = [][]Disc{
 func NewBoard() *Board {
 	return &Board{INITIAL_BORD}
 }
+
+func ReverseColor(disc Disc) Disc {
+	if disc == D {
+		return L
+	} else {
+		return D
+	}
+}

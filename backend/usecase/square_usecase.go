@@ -6,15 +6,24 @@ import (
 )
 
 type ISquareUsecase interface {
+	CreateSquares(turn_id uint, board model.Board) error
 	GetBoardByTurnId(turn_id uint) (*model.Board, error)
+	FindWinnerDiscByTurnId(turn_id uint) (model.Disc, error)
 }
 
 type squareUsecase struct {
 	sr repository.ISquareRepository
 }
 
-func NewSquareRepository(sr repository.ISquareRepository) ISquareUsecase {
+func NewSquareUsecase(sr repository.ISquareRepository) ISquareUsecase {
 	return &squareUsecase{sr}
+}
+
+func (su *squareUsecase) CreateSquares(turn_id uint, board model.Board) error {
+	if err := su.sr.CreateSquares(turn_id, board); err != nil {
+		return nil
+	}
+	return nil
 }
 
 func (su *squareUsecase) GetBoardByTurnId(turn_id uint) (*model.Board, error) {
@@ -37,4 +46,12 @@ func (su *squareUsecase) GetBoardByTurnId(turn_id uint) (*model.Board, error) {
 	}
 
 	return board, nil
+}
+
+func (su *squareUsecase) FindWinnerDiscByTurnId(turn_id uint) (model.Disc, error) {
+	winner_disc, err := su.sr.FindWinnerDiscByTurnId(turn_id)
+	if err != nil {
+		return 0, err
+	}
+	return winner_disc, err
 }

@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/tigaweb/reversi-app/backend/model"
 	"github.com/tigaweb/reversi-app/backend/usecase"
@@ -17,25 +18,30 @@ type turnService struct {
 	su usecase.ISquareUsecase
 	tu usecase.ITurnUsecase
 	bu usecase.IBoardUsecase
-	// move_usecaseを実装
+	mu usecase.IMoveUsecase
+	ru usecase.IResultUsecase
 }
 
-func NewTurnService(gu usecase.IGameUsecase, su usecase.ISquareUsecase, tu usecase.ITurnUsecase, bu usecase.IBoardUsecase) ITurnService {
-	return &turnService{gu, su, tu, bu}
+func NewTurnService(
+	gu usecase.IGameUsecase,
+	su usecase.ISquareUsecase,
+	tu usecase.ITurnUsecase,
+	bu usecase.IBoardUsecase,
+	mu usecase.IMoveUsecase,
+	ru usecase.IResultUsecase,
+) ITurnService {
+	return &turnService{gu, su, tu, bu, mu, ru}
 }
 
-// ターンを登録する処理 RegisterTurn ()
+// ターンを登録する処理
 func (ts turnService) RegisterTurn(turn_count int, game_id uint, move model.Move) error {
 	// 受け取ったgame_idのレコードが存在することの確認
 	game, err := ts.gu.FindGameRecordByGameId(game_id)
 	if err != nil {
 		return err
 	}
-	fmt.Println("RegisterTurnの処理")
-	fmt.Println(game.ID)
-	fmt.Println(turn_count)
 
-	// 前回(このターンで石を置く前)のturn_countを取得する turn_count - 1
+	// 前回(このターンで石を置く前)のturn_countを取得する
 	previous_turn_count := turn_count - 1
 
 	// game_idとturn_countからturn_idを取得
@@ -43,36 +49,80 @@ func (ts turnService) RegisterTurn(turn_count int, game_id uint, move model.Move
 	if err != nil {
 		return err
 	}
-	previous_board, err := ts.su.GetBoardByTurnId(previous_turn_id)
+	current_board, err := ts.su.GetBoardByTurnId(previous_turn_id)
 	if err != nil {
 		return err
 	}
-	fmt.Println(previous_board.Discs)
 
-	// 判定処理
-	// 石をおこうとしている場所が空か
-	// 	空ではない場合エラーを返す
-	// moveと現在のboardから、位置が空か判定
-	if previous_board.Discs[move.Y][move.X] != model.E {
+	// 判定処理(空の場所ではない場合エラー)
+	if current_board.Discs[move.Y][move.X] != model.E {
 		return fmt.Errorf("すでに石がある場所です")
 	}
-	// ひっくり返せる場所があるか
-	// 	moveと現在のboardから、ひっくり返せる位置のリストを取得
-	// 		位置のリストが空の場合、エラーを返す
-	listFlipPoints, err := ts.bu.GetFlipPoints(move, *previous_board)
+
+	// ひっくり返せる場所のリストを取得(ない場合エラー)
+	listFlipPoints, err := ts.bu.GetFlipPoints(move, *current_board)
 	if err != nil {
 		return err
 	}
-	fmt.Println(listFlipPoints)
-	// ひっくり返せる場所がある場合、現在のboardとリストから次の盤面を作成する
 
-	// 次の盤面と今回配置した石と逆の色の石から、ひっくり返せる場所があるか確認する
-	// 	存在する場合、次の色の石は今回の石の逆の色の石を指定する
-	//  存在しない場合、かつ、さらに今回の石も配置する場所がない場合、盤面のそれぞれの石の色をカウントし、多い方が勝利者となる
+	// ひっくり返せる場所がある場合、次の盤面を作成
+	if err := ts.bu.FlipDiscs(current_board, listFlipPoints, move); err != nil {
+		return err
+	}
+
+	turn := &model.Turn{}
+
+	// 次の盤面に逆の色の石を配置できるか確認
+	reversedColor := model.ReverseColor(model.Disc(move.Disc))
+	result_flag := 0
+	if ts.bu.SerchCanFlipPointsByDisc(reversedColor, *current_board) {
+		// 存在する場合、次ターンの石は逆の色
+		turn.NextDisc = int(reversedColor)
+	} else if ts.bu.SerchCanFlipPointsByDisc(model.Disc(move.Disc), *current_board) {
+		// 存在せず、今回の石がまた置ける場合は連続して石を打つ
+		turn.NextDisc = move.Disc
+	} else {
+		// 何もおけない場合、勝敗がついたと判断
+		result_flag = 1
+
+	}
 
 	// Turnを登録
+	turn.GameId = game.ID
+	turn.TurnCount = turn_count
+	turn.CreatedByID = game.CreatedBy.ID
+	turn.EndAt = time.Now()
+	if err := ts.tu.RegisterTurn(turn); err != nil {
+		return err
+	}
+
 	// Moveを登録
+	move.TurnId = turn.ID
+	if err := ts.mu.RegisterMove(&move); err != nil {
+		return err
+	}
+
 	// Squareを登録
+	if err := ts.su.CreateSquares(turn.ID, *current_board); err != nil {
+		return err
+	}
+
+	// 勝敗がついている場合、resultを記録
+	if result_flag == 1 {
+		// 盤面から多い方の石を計算する
+		winner_disc, err := ts.su.FindWinnerDiscByTurnId(turn.ID)
+		if err != nil {
+			return err
+		}
+		// game_resultに書き込む
+		if err := ts.ru.RegisterResult(
+			game_id,
+			game.CreatedByID,
+			int(winner_disc),
+		); err != nil {
+			return err
+		}
+	}
 
 	return nil
 }

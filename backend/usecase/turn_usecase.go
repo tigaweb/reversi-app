@@ -10,6 +10,7 @@ import (
 type ITurnUsecase interface {
 	CreateFirstTurnAndBoardBySoloPlay(game model.Game) error
 	FindTurnIdByGameIdAndTurnCount(game_id uint, turn_count int) (uint, error)
+	RegisterTurn(turn *model.Turn) error
 }
 
 type turnUsecase struct {
@@ -48,4 +49,11 @@ func (tu *turnUsecase) FindTurnIdByGameIdAndTurnCount(game_id uint, turn_count i
 		return 0, err
 	}
 	return turn.ID, nil
+}
+
+func (tu *turnUsecase) RegisterTurn(turn *model.Turn) error {
+	if err := tu.tr.RegisterTurn(turn); err != nil {
+		return err
+	}
+	return nil
 }

@@ -9,6 +9,7 @@ type ISquareRepository interface {
 	CreateSquares(turn_id uint, board model.Board) error
 	// TODO 盤面を取得する
 	GetSquaresByTurnId(turn_id uint) ([]model.Square, error)
+	FindWinnerDiscByTurnId(turn_id uint) (model.Disc, error)
 }
 
 type squareRepository struct {
@@ -42,4 +43,24 @@ func (sr *squareRepository) GetSquaresByTurnId(turn_id uint) ([]model.Square, er
 		return nil, err
 	}
 	return squares, nil
+}
+
+func (sr *squareRepository) FindWinnerDiscByTurnId(turn_id uint) (model.Disc, error) {
+	var result struct {
+		Disc  int
+		Count int
+	}
+
+	err := sr.db.Table("squares").
+		Select("disc, COUNT(*) as count").
+		Where("turn_id = ?", turn_id).
+		Group("disc").
+		Order("count DESC").
+		First(&result).Error
+
+	if err != nil {
+		return 0, err
+	}
+
+	return model.Disc(result.Disc), nil
 }
