@@ -8,6 +8,7 @@ import (
 type ITurnRepository interface {
 	RegisterTurn(turn *model.Turn) error
 	// game_idとturn_idからTurnを取得する処理
+	FindTurnByGameIdAndTurnCount(game_id uint, turn_count int) (model.Turn, error)
 	// GetTurnByGameIdAndTurnId(game_id uint, turn_id uint) (turn model.Turn, error error)
 	// 最新のターン情報を取得する処理 Turnモデルにレスポンスの型を定義するか?
 }
@@ -25,4 +26,12 @@ func (tr *turnRepository) RegisterTurn(turn *model.Turn) error {
 		return err
 	}
 	return nil
+}
+
+func (tr *turnRepository) FindTurnByGameIdAndTurnCount(game_id uint, turn_count int) (model.Turn, error) {
+	turn := model.Turn{}
+	if err := tr.db.Where("game_id = ? AND turn_count = ?", game_id, turn_count).Find(&turn).Error; err != nil {
+		return turn, err
+	}
+	return turn, nil
 }

@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/tigaweb/reversi-app/backend/model"
@@ -10,6 +9,7 @@ import (
 
 type ITurnUsecase interface {
 	CreateFirstTurnAndBoardBySoloPlay(game model.Game) error
+	FindTurnIdByGameIdAndTurnCount(game_id uint, turn_count int) (uint, error)
 }
 
 type turnUsecase struct {
@@ -33,10 +33,19 @@ func (tu *turnUsecase) CreateFirstTurnAndBoardBySoloPlay(game model.Game) error 
 	if err := tu.tr.RegisterTurn(&firstTurn); err != nil {
 		return err
 	}
+	// NOTE Gameの作成とGameIDを受け取って盤面を登録する処理を素直に分ければよかった..?
 	// 初期盤面の登録
 	boad := model.NewBoard() // 初期盤面の取得
 	if err := tu.sr.CreateSquares(firstTurn.ID, *boad); err != nil {
 		return err
 	}
 	return nil
+}
+
+func (tu *turnUsecase) FindTurnIdByGameIdAndTurnCount(game_id uint, turn_count int) (uint, error) {
+	turn, err := tu.tr.FindTurnByGameIdAndTurnCount(game_id, turn_count)
+	if err != nil {
+		return 0, err
+	}
+	return turn.ID, nil
 }

@@ -7,6 +7,8 @@ import (
 
 type ISquareRepository interface {
 	CreateSquares(turn_id uint, board model.Board) error
+	// TODO 盤面を取得する
+	GetSquaresByTurnId(turn_id uint) ([]model.Square, error)
 }
 
 type squareRepository struct {
@@ -32,4 +34,12 @@ func (sr *squareRepository) CreateSquares(turn_id uint, board model.Board) error
 		}
 	}
 	return nil
+}
+
+func (sr *squareRepository) GetSquaresByTurnId(turn_id uint) ([]model.Square, error) {
+	var squares []model.Square
+	if err := sr.db.Where("turn_id = ?", turn_id).Find(&squares).Error; err != nil {
+		return nil, err
+	}
+	return squares, nil
 }

@@ -11,6 +11,7 @@ import (
 
 type ITurnController interface {
 	RegisterTurn(c echo.Context) error
+	// game_idから最新の盤面を取得して返す処理
 }
 
 type turnController struct {
@@ -35,3 +36,5 @@ func (tc turnController) RegisterTurn(c echo.Context) error {
 	tc.ts.RegisterTurn(req.TurnCount, req.GameID, req.Move)
 	return c.NoContent(http.StatusOK)
 }
+
+// game_idから最新の盤面を取得して返す処理
