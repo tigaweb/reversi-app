@@ -12,24 +12,30 @@ import (
 
 func main() {
 	db := db.NewDB()
+	// Repository
 	userRepository := repository.NewUserRepository(db)
-	userValidator := validator.NewUserValidator()
-	userUsecase := usecase.NewUserUsecase(userRepository, userValidator)
-	userController := controller.NewUserController(userUsecase)
 	gameRepository := repository.NewGameRepository(db)
-	gameUsecase := usecase.NewGameUsecase(gameRepository)
-	turnRepository := repository.NewTurnRepository(db)
 	squareRepository := repository.NewSquareRepository(db)
-	turnUsecase := usecase.NewTurnUsecase(turnRepository, squareRepository)
-	squareUsecase := usecase.NewSquareUsecase(squareRepository)
-	gameController := controller.NewGameController(gameUsecase, turnUsecase)
-	boardUsecase := usecase.NewBoardUsecase()
+	turnRepository := repository.NewTurnRepository(db)
 	moveRepository := repository.NewMoveRepository(db)
-	moveUsecase := usecase.NewMoveUsecase(moveRepository)
 	resultRepository := repository.NewResultRepository(db)
+	// Validator
+	userValidator := validator.NewUserValidator()
+	// Usecase
+	userUsecase := usecase.NewUserUsecase(userRepository, userValidator)
+	gameUsecase := usecase.NewGameUsecase(gameRepository)
+	turnUsecase := usecase.NewTurnUsecase(turnRepository, squareRepository)
+	moveUsecase := usecase.NewMoveUsecase(moveRepository)
+	squareUsecase := usecase.NewSquareUsecase(squareRepository)
+	boardUsecase := usecase.NewBoardUsecase()
 	reslutUsecase := usecase.NewResultUsecase(resultRepository)
+	// Service
 	turnService := service.NewTurnService(gameUsecase, squareUsecase, turnUsecase, boardUsecase, moveUsecase, reslutUsecase)
+	// Controller
+	userController := controller.NewUserController(userUsecase)
+	gameController := controller.NewGameController(gameUsecase, turnUsecase)
 	turnController := controller.NewTurnController(turnService)
+	// router
 	e := router.NewRouter(userController, gameController, turnController)
 	e.Logger.Fatal(e.Start(":8080"))
 }

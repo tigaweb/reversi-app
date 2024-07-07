@@ -10,7 +10,9 @@ import (
 
 type ITurnService interface {
 	RegisterTurn(turn_count int, game_id uint, move model.Move) error
-	// game_idから、最新のTurn,Squareを取得して返す処理
+	GetBoardByTurnId(turn_id uint) (*model.Board, error)
+	FindResultByGameId(game_id uint) (model.GameResult, error)
+	FindMaxTurnCountByGameId(game_id uint) (model.Turn, error)
 }
 
 type turnService struct {
@@ -128,3 +130,26 @@ func (ts turnService) RegisterTurn(turn_count int, game_id uint, move model.Move
 }
 
 // game_idから、最新のTurn,Squareを取得して返す処理
+func (ts turnService) GetBoardByTurnId(turn_id uint) (*model.Board, error) {
+	board, err := ts.su.GetBoardByTurnId(turn_id)
+	if err != nil {
+		return board, err
+	}
+	return board, nil
+}
+
+func (ts turnService) FindResultByGameId(game_id uint) (model.GameResult, error) {
+	result, err := ts.ru.FindResultByGameId(game_id)
+	if err != nil {
+		return result, err
+	}
+	return result, nil
+}
+
+func (ts *turnService) FindMaxTurnCountByGameId(game_id uint) (model.Turn, error) {
+	turn, err := ts.tu.FindMaxTurnCountByGameId(game_id)
+	if err != nil {
+		return turn, err
+	}
+	return turn, nil
+}

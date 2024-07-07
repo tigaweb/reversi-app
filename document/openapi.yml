@@ -123,9 +123,9 @@ paths:
                     type: integer
                     example: 1
 
-  /games/latest/turns/{turn_count}:
+  /games/latest/turns/{game_id}:
     parameters:
-      - name: turn_count
+      - name: game_id
         in: path
         schema:
           type: integer
@@ -160,10 +160,10 @@ paths:
                       ]
                   next_disc:
                     type: integer
-                    example: 1
+                    example: 2
                   winner_disc:
                     type: integer
-                    example: 1
+                    example: 0
 
   /games/latest/turns:
     post:

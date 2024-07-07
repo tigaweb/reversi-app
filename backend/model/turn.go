@@ -18,3 +18,11 @@ type RegisterTurnRequest struct {
 	TurnCount int  `json:"turn_count"`
 	Move      Move `json:"move"`
 }
+
+type FindLatestTurnResponse struct {
+	GameID     uint  `json:"game_id"`
+	TurnCount  int   `json:"turn_count"`
+	Board      Discs `json:"board"`
+	NextDisc   int   `json:"next_disc"`
+	WinnerDisc int   `json:"winner_disc"`
+}

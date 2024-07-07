@@ -7,10 +7,8 @@ import (
 
 type ITurnRepository interface {
 	RegisterTurn(turn *model.Turn) error
-	// game_idとturn_idからTurnを取得する処理
 	FindTurnByGameIdAndTurnCount(game_id uint, turn_count int) (model.Turn, error)
-	// GetTurnByGameIdAndTurnId(game_id uint, turn_id uint) (turn model.Turn, error error)
-	// 最新のターン情報を取得する処理 Turnモデルにレスポンスの型を定義するか?
+	FindMaxTurnCountByGameId(game_id uint) (model.Turn, error)
 }
 
 type turnRepository struct {
@@ -34,4 +32,12 @@ func (tr *turnRepository) FindTurnByGameIdAndTurnCount(game_id uint, turn_count 
 		return turn, err
 	}
 	return turn, nil
+}
+
+func (tr *turnRepository) FindMaxTurnCountByGameId(game_id uint) (model.Turn, error) {
+	turn := &model.Turn{}
+	if err := tr.db.Where("game_id = ?", game_id).Order("turn_count DESC").First(&turn).Error; err != nil {
+		return *turn, err
+	}
+	return *turn, nil
 }

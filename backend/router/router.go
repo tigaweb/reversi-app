@@ -65,6 +65,7 @@ func NewRouter(
 	}))
 	g.POST("", gc.CreateGame)
 	t := g.Group("/latest/turns/")
+	t.GET(":game_id", tc.FindLatestTurn)
 	t.POST("", tc.RegisterTurn)
 
 	return e

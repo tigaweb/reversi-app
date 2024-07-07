@@ -11,6 +11,7 @@ type ITurnUsecase interface {
 	CreateFirstTurnAndBoardBySoloPlay(game model.Game) error
 	FindTurnIdByGameIdAndTurnCount(game_id uint, turn_count int) (uint, error)
 	RegisterTurn(turn *model.Turn) error
+	FindMaxTurnCountByGameId(game_id uint) (model.Turn, error)
 }
 
 type turnUsecase struct {
@@ -56,4 +57,12 @@ func (tu *turnUsecase) RegisterTurn(turn *model.Turn) error {
 		return err
 	}
 	return nil
+}
+
+func (tu *turnUsecase) FindMaxTurnCountByGameId(game_id uint) (model.Turn, error) {
+	turn, err := tu.tr.FindMaxTurnCountByGameId(game_id)
+	if err != nil {
+		return turn, err
+	}
+	return turn, nil
 }

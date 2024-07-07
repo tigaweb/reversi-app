@@ -20,7 +20,7 @@ type Board struct {
 	Discs
 }
 
-var INITIAL_BORD Discs = [][]Disc{
+var INITIAL_BOARD Discs = [][]Disc{
 	{E, E, E, E, E, E, E, E},
 	{E, E, E, E, E, E, E, E},
 	{E, E, E, E, E, E, E, E},
@@ -32,7 +32,7 @@ var INITIAL_BORD Discs = [][]Disc{
 }
 
 func NewBoard() *Board {
-	return &Board{INITIAL_BORD}
+	return &Board{INITIAL_BOARD}
 }
 
 func ReverseColor(disc Disc) Disc {
