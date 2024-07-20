@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Link } from 'react-router-dom'
 import { getGameResultHistory } from "../stores/historySlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../stores/store";
@@ -26,7 +27,14 @@ const MatchHistoryTable = () => {
           return (
             <tr key={g.game_id}>
               <td className="border-2 border-sky-500 w-1/6">{g.game_id}</td>
-              <td className="border-2 border-sky-500 w-1/6">{g.game_state === 0 ? "対戦中" : "対戦終了"}</td>
+              <td className="border-2 border-sky-500 w-1/6">
+              {g.game_state !== 0
+                ? "対戦終了"
+                : <Link to={`/game/${g.game_id}`} className="text-white min-w-40 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                対戦中
+              </Link>
+              }
+              </td>
               <td className="border-2 border-sky-500 w-1/6">{g.winner_user_name !== "" ? g.winner_user_name : "-"}</td>
               <td className="border-2 border-sky-500 w-1/6">{g.winner_disc === 0 ? "-" : g.winner_disc === 1 ? "黒" : "白"}</td>
               <td className="border-2 border-sky-500 w-1/6 whitespace-pre-wrap">{String(g.started_at).replace(' ', '\n')}</td>

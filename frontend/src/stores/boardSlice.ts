@@ -54,27 +54,71 @@ export const registerTurn = createAsyncThunk(
   }
 );
 
+export const restartGame = createAsyncThunk(
+  'data/restartGame',
+  async (payload: { game_id: number }) => {
+    axios.defaults.withCredentials = true
+    const getCsrfToken = async () => {
+      const { data } = await axios.get<CsrfToken>(
+        `${apiUrl}/csrf`
+      )
+      axios.defaults.headers.common['X-CSRF-Token'] = data.csrf_token
+    }
+    getCsrfToken()
+    const { game_id } = payload;
+    try {
+      const findLatestTurnResult = await axios.get(apiUrl + `/games/latest/turns/${game_id}`, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      })
+      console.log(`findLatestTurnResult : ${findLatestTurnResult.status}`)
+      return findLatestTurnResult.data
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorMessage = error.response?.data || 'Something went wrong';
+        throw new Error(errorMessage);
+      }
+    }
+  }
+);
+
+
+type BoardState = {
+  game_id: number,
+  board: number[][],
+  turn_count: number,
+  next_disc: number,
+  winner_disc: number | null,
+  loading: boolean,
+  error: string,
+}
+
+const initialBoard: number[][] = [
+  [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+  [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+  [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+  [EMPTY, EMPTY, EMPTY, LIGHT, DARK, EMPTY, EMPTY, EMPTY],
+  [EMPTY, EMPTY, EMPTY, DARK, LIGHT, EMPTY, EMPTY, EMPTY],
+  [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+  [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+  [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+]
+
+
+const initialState: BoardState = {
+  game_id: 0,
+  board: initialBoard,
+  turn_count: 0,
+  next_disc: 1,
+  winner_disc: null,
+  loading: false,
+  error: "",
+}
 
 export const boardSlice = createSlice({
   name: 'board',
-  initialState: {
-    game_id: 0,
-    board: [
-      [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-      [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-      [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-      [EMPTY, EMPTY, EMPTY, LIGHT, DARK, EMPTY, EMPTY, EMPTY],
-      [EMPTY, EMPTY, EMPTY, DARK, LIGHT, EMPTY, EMPTY, EMPTY],
-      [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-      [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-      [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    ],
-    turn_count: 0,
-    next_disc: 1,
-    winner_disc: null,
-    loading: false,
-    error: "",
-  },
+  initialState,
   reducers: {
     set: (state, { payload }) => {
       const { line, squre }: boardPosition = payload;
@@ -83,8 +127,10 @@ export const boardSlice = createSlice({
     startGame: (state, { payload }) => {
       const { game_id }: gameId = payload;
       state.game_id = game_id;
-      console.log('ゲーム開始')
-      console.log('game_id：', game_id)
+      state.board = initialBoard;
+      state.turn_count = 0;
+      state.next_disc = 1;
+      state.winner_disc = null;
     }
   },
   extraReducers: (builder) => {
@@ -104,6 +150,26 @@ export const boardSlice = createSlice({
         state.winner_disc = payload.winner_disc === 0 ? null : payload.winner_disc;
       })
       .addCase(registerTurn.rejected, (state, action) => {
+        state.loading = false;
+        state.error = typeof (action.error.message) === "string" ? action.error.message : "";
+        console.log(state.error);
+        console.log('失敗');
+      })
+      .addCase(restartGame.pending, (state) => {
+        state.loading = true;
+        state.error = '';
+        console.log('ロード中');
+      })
+      .addCase(restartGame.fulfilled, (state, { payload }) => {
+        console.log(payload);
+        state.loading = false;
+        state.game_id = payload.game_id;
+        state.turn_count = payload.turn_count;
+        state.board = payload.board;
+        state.next_disc = payload.next_disc;
+        state.winner_disc = payload.winner_disc === 0 ? null : payload.winner_disc;
+      })
+      .addCase(restartGame.rejected, (state, action) => {
         state.loading = false;
         state.error = typeof (action.error.message) === "string" ? action.error.message : "";
         console.log(state.error);

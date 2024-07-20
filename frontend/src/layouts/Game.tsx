@@ -1,9 +1,11 @@
 import Header from '../components/Header';
 import Board from "../components/Board";
+import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../stores/store';
 
 const Game = () => {
+  const { game_id } = useParams();
   const error = useSelector((state: RootState) => state.boardState.error);
   return (
     <>
@@ -17,7 +19,7 @@ const Game = () => {
               : ""
           }
         </div>
-        <Board />
+        <Board gameId={game_id} />
       </main>
     </>
   );

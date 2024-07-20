@@ -1,13 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from '../stores/store';
-import { registerTurn, startGame } from "../stores/boardSlice";
+import { registerTurn, restartGame, startGame } from "../stores/boardSlice";
 import { useEffect } from "react";
 import { CsrfToken } from '../types'
 import axios from 'axios';
 
 const apiUrl = import.meta.env.VITE_API_KEY;
 
-const Board = () => {
+const Board = ({ gameId }) => {
   const board = useSelector((state: RootState) => state.boardState.board);
   const turn_count = useSelector((state: RootState) => state.boardState.turn_count);
   const next_disc = useSelector((state: RootState) => state.boardState.next_disc);
@@ -29,14 +29,17 @@ const Board = () => {
           getCsrfToken();
         }
         setTimeout(async function () {
-          const response = await axios.post(apiUrl + '/games', {}, {
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            withCredentials: true
-          });
-          console.log("game開始")
-          dispatch(startGame({ game_id: response.data.game_id }))
+          if (gameId) {
+            dispatch(restartGame({ game_id: gameId }));
+          } else {
+            const response = await axios.post(apiUrl + '/games', {}, {
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              withCredentials: true
+            });
+            dispatch(startGame({ game_id: response.data.game_id }))
+          }
         }, 300);
       } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -47,7 +50,7 @@ const Board = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [gameId]);
 
   return (
     <>

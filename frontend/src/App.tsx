@@ -49,7 +49,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Top />} />
         <Route path="/auth" element={<Auth />} />
-        <Route path="/game" element={<Game />} />
+        <Route path="/game/:game_id?" element={<Game />} />
         <Route path="/history" element={<History />} />
       </Routes>
     </BrowserRouter>
