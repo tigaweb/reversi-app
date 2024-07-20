@@ -35,7 +35,7 @@ function App() {
         });
         if (response.status === 200 && response.data.is_login) {
           dispatch(setLoginState({ is_login: response.data.is_login }))
-          } else if (response.status === 201) {
+        } else if (response.status === 201) {
           console.log(response.data.message);
         }
       } catch (error) {

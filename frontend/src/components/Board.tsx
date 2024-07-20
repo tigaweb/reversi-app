@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from '../stores/store';
 import { registerTurn, startGame } from "../stores/boardSlice";
 import { useEffect } from "react";
+import { CsrfToken } from '../types'
 import axios from 'axios';
 
 const apiUrl = import.meta.env.VITE_API_KEY;
@@ -17,13 +18,27 @@ const Board = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.post(apiUrl + '/games', {}, {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          withCredentials: true
-        });
-        dispatch(startGame({ game_id: response.data.game_id }))
+        if (axios.defaults.headers.common['X-CSRF-Token'] === undefined) {
+          axios.defaults.withCredentials = true
+          const getCsrfToken = async () => {
+            const { data } = await axios.get<CsrfToken>(
+              `${apiUrl}/csrf`
+            )
+            axios.defaults.headers.common['X-CSRF-Token'] = data.csrf_token
+          }
+          getCsrfToken();
+
+        }
+        setTimeout(async function () {
+          const response = await axios.post(apiUrl + '/games', {}, {
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            withCredentials: true
+          });
+          console.log("game開始")
+          dispatch(startGame({ game_id: response.data.game_id }))
+        }, 300);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.error("Axios error:", error.response?.data);

@@ -27,7 +27,9 @@ func (tc turnController) RegisterTurn(c echo.Context) error {
 	if err := c.Bind(req); err != nil {
 		return err
 	}
-	tc.ts.RegisterTurn(req.TurnCount, req.GameID, req.Move)
+	if err := tc.ts.RegisterTurn(req.TurnCount, req.GameID, req.Move); err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
 	return c.NoContent(http.StatusOK)
 }
 
@@ -47,6 +49,7 @@ func (tc turnController) FindLatestTurn(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
+	res.TurnCount = latest_turn.TurnCount
 
 	// 盤面を取得
 	latest_board, err := tc.ts.GetBoardByTurnId(latest_turn.ID)

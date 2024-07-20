@@ -1,17 +1,25 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { boardPosition, gameId, registerTurnRequestBody } from "../types/index";
+import axios from "axios";
+import { CsrfToken } from '../types'
 
-const apiUrl = import.meta.env.REACT_APP_API_URL;
+const apiUrl = import.meta.env.VITE_API_KEY;
 
 const EMPTY: number = 0;
 const DARK: number = 1;
 const LIGHT: number = 2;
 
-
-
 export const registerTurn = createAsyncThunk(
   'data/placeStone',
   async (payload: { game_id: number, turn_count: number, disc: number, x: number, y: number }) => {
+    axios.defaults.withCredentials = true
+    const getCsrfToken = async () => {
+      const { data } = await axios.get<CsrfToken>(
+        `${apiUrl}/csrf`
+      )
+      axios.defaults.headers.common['X-CSRF-Token'] = data.csrf_token
+    }
+    getCsrfToken()
     const { game_id, turn_count, disc, x, y } = payload;
     const requestBody: registerTurnRequestBody = {
       game_id,
@@ -22,23 +30,27 @@ export const registerTurn = createAsyncThunk(
         y,
       }
     }
-    const result = await fetch(apiUrl + 'games/latest/turns', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(requestBody)
-    });
-
-    if (!result.ok) {
-      const errorData = await result.json();
-      throw new Error(errorData.message || 'Something went wrong');
-    };
-
-    const response = await fetch(apiUrl + `games/latest/turns/${turn_count}`, {
-      method: 'GET'
-    });
-    return response.json();
+    try {
+      const registerTurnResult = await axios.post(apiUrl + '/games/latest/turns/', requestBody, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true,
+      })
+      console.log(`registerTurnResult : ${registerTurnResult.status}`)
+      const findLatestTurnResult = await axios.get(apiUrl + `/games/latest/turns/${requestBody.game_id}`, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      })
+      console.log(`findLatestTurnResult : ${findLatestTurnResult.status}`)
+      return findLatestTurnResult.data
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorMessage = error.response?.data || 'Something went wrong';
+        throw new Error(errorMessage);
+      }
+    }
   }
 );
 
@@ -63,7 +75,7 @@ export const boardSlice = createSlice({
     loading: false,
     error: "",
   },
-  reducers: { // NOTE 自分の色は何か、boardの位置をどのように渡すか
+  reducers: {
     set: (state, { payload }) => {
       const { line, squre }: boardPosition = payload;
       state.board[line][squre] = DARK;
@@ -71,6 +83,7 @@ export const boardSlice = createSlice({
     startGame: (state, { payload }) => {
       const { game_id }: gameId = payload;
       state.game_id = game_id;
+      console.log('ゲーム開始')
       console.log('game_id：', game_id)
     }
   },
@@ -84,10 +97,11 @@ export const boardSlice = createSlice({
       .addCase(registerTurn.fulfilled, (state, { payload }) => {
         console.log(payload);
         state.loading = false;
+        state.game_id = payload.game_id;
         state.turn_count = payload.turn_count;
         state.board = payload.board;
         state.next_disc = payload.next_disc;
-        state.winner_disc = payload.winner_disc;
+        state.winner_disc = payload.winner_disc === 0 ? null : payload.winner_disc;
       })
       .addCase(registerTurn.rejected, (state, action) => {
         state.loading = false;
