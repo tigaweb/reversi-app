@@ -43,3 +43,12 @@ export type registerTurnRequestBody = {
 export type gameId = {
   game_id: number
 }
+
+export type GameHistory = {
+  game_id: number,
+  game_state: number,
+  winner_user_name: string | null,
+  winner_disc: number | null,
+  started_at: Date | string,
+  end_at: Date | string,
+}

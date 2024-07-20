@@ -13,15 +13,19 @@ type IGameUsecase interface {
 
 type gameUsecase struct {
 	gr repository.IGameRepository
+	rr repository.IResultRepository
 }
 
-func NewGameUsecase(gr repository.IGameRepository) IGameUsecase {
-	return &gameUsecase{gr}
+func NewGameUsecase(gr repository.IGameRepository, rr repository.IResultRepository) IGameUsecase {
+	return &gameUsecase{gr, rr}
 }
 
 func (gu *gameUsecase) NewGame(game *model.Game) (*model.CreateGameResponse, error) {
 	game_response := model.CreateGameResponse{}
 	if err := gu.gr.CreateGame(game); err != nil {
+		return nil, err
+	}
+	if err := gu.rr.CreateResutl(game.ID); err != nil {
 		return nil, err
 	}
 	game_response.ID = game.ID

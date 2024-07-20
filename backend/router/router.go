@@ -64,6 +64,7 @@ func NewRouter(
 		TokenLookup: "cookie:token",
 	}))
 	g.POST("", gc.CreateGame)
+	g.GET("", gc.GetGameResult)
 	t := g.Group("/latest/turns/")
 	t.GET(":game_id", tc.FindLatestTurn)
 	t.POST("", tc.RegisterTurn)

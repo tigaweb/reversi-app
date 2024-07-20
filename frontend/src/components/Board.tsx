@@ -27,7 +27,6 @@ const Board = () => {
             axios.defaults.headers.common['X-CSRF-Token'] = data.csrf_token
           }
           getCsrfToken();
-
         }
         setTimeout(async function () {
           const response = await axios.post(apiUrl + '/games', {}, {

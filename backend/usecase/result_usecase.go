@@ -10,6 +10,7 @@ import (
 type IResultUsecase interface {
 	RegisterResult(game_id uint, winner_by_id uint, winner_disc int) error
 	FindResultByGameId(game_id uint) (model.GameResult, error)
+	FindResultByUserId(user_id uint) ([]model.ResponseGameHistory, error)
 }
 
 type resultUsecase struct {
@@ -38,4 +39,12 @@ func (ru *resultUsecase) FindResultByGameId(game_id uint) (model.GameResult, err
 		return result, err
 	}
 	return result, nil
+}
+
+func (ru *resultUsecase) FindResultByUserId(user_id uint) ([]model.ResponseGameHistory, error) {
+	gameHistory, err := ru.rr.FindResultByUserId(user_id)
+	if err != nil {
+		return nil, err
+	}
+	return gameHistory, err
 }

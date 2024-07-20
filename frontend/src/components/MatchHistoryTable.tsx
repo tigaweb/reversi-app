@@ -4,40 +4,35 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../stores/store";
 
 const MatchHistoryTable = () => {
-  const games = useSelector((state: RootState) => state.historyState.games)
+  const game_history = useSelector((state: RootState) => state.historyState.game_history)
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     dispatch(getGameResultHistory());
   }, []);
   return (
-    <table className="pt-5">
-      <thead className="size-full">
+    <table className="pt-6 size-full w-10/12 mx-auto">
+      <thead>
         <tr>
-          <th className="w-1/5">黒を打った回数</th>
-          <th className="w-1/5">白を打った回数</th>
-          <th className="w-1/5">勝った石</th>
-          <th className="w-1/5">対戦開始時刻</th>
-          <th className="w-1/5">対戦終了時刻</th>
+          <th className="border-2 border-sky-500 w-1/6">対戦ID</th>
+          <th className="border-2 border-sky-500 w-1/6">状況</th>
+          <th className="border-2 border-sky-500 w-1/6">勝者</th>
+          <th className="border-2 border-sky-500 w-1/6">勝った石</th>
+          <th className="border-2 border-sky-500 w-1/6">対戦開始時刻</th>
+          <th className="border-2 border-sky-500 w-1/6">対戦終了時刻</th>
         </tr>
       </thead>
-      <tbody className="size-full">
-        {/* <tr>
-          <td className="w-1/5">1</td>
-          <td className="w-1/5">1</td>
-          <td className="w-1/5">1</td>
-          <td className="w-1/5">2017-07-21T17:32:28z</td>
-          <td className="w-1/5">2017-07-21T17:32:28z</td>
-        </tr> */}
-        {games.map((g) => {
+      <tbody>
+        {game_history.map((g) => {
           return (
-            <tr key={g.id}>
-              <td className="w-1/5">{g.darkMoveCount}</td>
-              <td className="w-1/5">{g.lightMoveCount}</td>
-              <td className="w-1/5">{g.winner_disc}</td>
-              <td className="w-1/5">{g.startedAt}</td>
-              <td className="w-1/5">{g.endAt}</td>
+            <tr key={g.game_id}>
+              <td className="border-2 border-sky-500 w-1/6">{g.game_id}</td>
+              <td className="border-2 border-sky-500 w-1/6">{g.game_state === 0 ? "対戦中" : "対戦終了"}</td>
+              <td className="border-2 border-sky-500 w-1/6">{g.winner_user_name !== "" ? g.winner_user_name : "-"}</td>
+              <td className="border-2 border-sky-500 w-1/6">{g.winner_disc === 0 ? "-" : g.winner_disc === 1 ? "黒" : "白"}</td>
+              <td className="border-2 border-sky-500 w-1/6 whitespace-pre-wrap">{String(g.started_at).replace(' ', '\n')}</td>
+              <td className="border-2 border-sky-500 w-1/6 whitespace-pre-wrap">{g.game_state === 0 ? "-" : String(g.end_at).replace(' ', '\n')}</td>
             </tr>
-          );
+          )
         })}
       </tbody>
     </table>

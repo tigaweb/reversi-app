@@ -23,7 +23,7 @@ func main() {
 	userValidator := validator.NewUserValidator()
 	// Usecase
 	userUsecase := usecase.NewUserUsecase(userRepository, userValidator)
-	gameUsecase := usecase.NewGameUsecase(gameRepository)
+	gameUsecase := usecase.NewGameUsecase(gameRepository, resultRepository)
 	turnUsecase := usecase.NewTurnUsecase(turnRepository, squareRepository)
 	moveUsecase := usecase.NewMoveUsecase(moveRepository)
 	squareUsecase := usecase.NewSquareUsecase(squareRepository)
@@ -33,7 +33,7 @@ func main() {
 	turnService := service.NewTurnService(gameUsecase, squareUsecase, turnUsecase, boardUsecase, moveUsecase, reslutUsecase)
 	// Controller
 	userController := controller.NewUserController(userUsecase)
-	gameController := controller.NewGameController(gameUsecase, turnUsecase)
+	gameController := controller.NewGameController(gameUsecase, turnUsecase, reslutUsecase)
 	turnController := controller.NewTurnController(turnService)
 	// router
 	e := router.NewRouter(userController, gameController, turnController)

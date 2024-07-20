@@ -12,16 +12,17 @@ import (
 
 type IGameController interface {
 	CreateGame(c echo.Context) error
-	// GetGameResult(c echo.Context) error
+	GetGameResult(c echo.Context) error
 }
 
 type gameController struct {
 	gu usecase.IGameUsecase
 	tu usecase.ITurnUsecase
+	ru usecase.IResultUsecase
 }
 
-func NewGameController(gu usecase.IGameUsecase, tu usecase.ITurnUsecase) IGameController {
-	return &gameController{gu, tu}
+func NewGameController(gu usecase.IGameUsecase, tu usecase.ITurnUsecase, ru usecase.IResultUsecase) IGameController {
+	return &gameController{gu, tu, ru}
 }
 
 func (gc *gameController) CreateGame(c echo.Context) error {
@@ -39,4 +40,16 @@ func (gc *gameController) CreateGame(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusCreated, gameRes)
+}
+
+func (gc *gameController) GetGameResult(c echo.Context) error {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	userId := claims["user_id"]
+	println(userId)
+	gameHistory, err := gc.ru.FindResultByUserId(uint(userId.(float64)))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusCreated, gameHistory)
 }
