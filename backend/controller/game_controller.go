@@ -46,8 +46,8 @@ func (gc *gameController) GetGameResult(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
 	userId := claims["user_id"]
-	println(userId)
-	gameHistory, err := gc.ru.FindResultByUserId(uint(userId.(float64)))
+	userIdUint := uint(userId.(float64))
+	gameHistory, err := gc.ru.FindResultByUserId(userIdUint)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}

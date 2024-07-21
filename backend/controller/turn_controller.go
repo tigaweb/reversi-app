@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"github.com/tigaweb/reversi-app/backend/model"
 	"github.com/tigaweb/reversi-app/backend/service"
@@ -35,14 +36,26 @@ func (tc turnController) RegisterTurn(c echo.Context) error {
 
 // game_idから最新の盤面を取得して返す処理
 func (tc turnController) FindLatestTurn(c echo.Context) error {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	userId := claims["user_id"]
+	userIdUint := uint(userId.(float64))
+
 	game_id := c.Param("game_id")
-	gameIDUint, err := strconv.ParseUint(game_id, 10, 64)
+	gameIDUint64, err := strconv.ParseUint(game_id, 10, 64)
+	gameIDUint := uint(gameIDUint64)
+	// 不正なgame_idの検出
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid game_id"})
+		return c.JSON(http.StatusBadRequest, "invalid game_id")
+	}
+
+	// 対戦に参加していないユーザーからのアクセスを不正として検出する
+	if err := tc.ts.CheckParticipationByUserId(gameIDUint, userIdUint); err != nil {
+		return c.JSON(http.StatusBadRequest, "not your business")
 	}
 
 	res := &model.FindLatestTurnResponse{}
-	res.GameID = uint(gameIDUint)
+	res.GameID = gameIDUint
 
 	// ターンカウントの最大を取得
 	latest_turn, err := tc.ts.FindMaxTurnCountByGameId(res.GameID)

@@ -9,6 +9,7 @@ type IGameUsecase interface {
 	NewGame(game *model.Game) (*model.CreateGameResponse, error)
 	GameHistory(user_id uint) ([]*model.GameResult, error)
 	FindGameRecordByGameId(game_id uint) (model.Game, error)
+	CheckParticipationByUserId(game_id uint, user_id uint) error
 }
 
 type gameUsecase struct {
@@ -47,4 +48,11 @@ func (gu *gameUsecase) FindGameRecordByGameId(game_id uint) (model.Game, error) 
 		return game, err
 	}
 	return game, nil
+}
+
+func (gu *gameUsecase) CheckParticipationByUserId(game_id uint, user_id uint) error {
+	if err := gu.gr.CheckParticipationByUserId(game_id, user_id); err != nil {
+		return err
+	}
+	return nil
 }

@@ -10,6 +10,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const is_Authenticated = useSelector((state: RootState) => state.authState.is_Authenticated);
   const is_login = useSelector((state: RootState) => state.authState.is_login);
+  const error = useSelector((state: RootState) => state.authState.error);
   useEffect(() => {
     if (is_Authenticated !== is_login) {
       navigate('/');
@@ -25,7 +26,9 @@ const Auth = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   return (
-    <>
+    <><div className='warning-message-area'>
+
+    </div>
       <div className="pt-4 flex justify-center items-center flex-col text-gray-600 max-w-full">
         <div className="flex items-center">
           <span className="text-center text-3xl font-extrabold">
@@ -33,7 +36,7 @@ const Auth = () => {
           </span>
         </div>
         <h2 className="my-6">{login ? 'Login' : 'Create a new account'}</h2>
-        <div>
+        <div className="w-[25rem]">
           {login ? '' :
             <div>
               <input
@@ -89,6 +92,11 @@ const Auth = () => {
             }
           </div>
         </div>
+          {
+            error !== ""
+              ? <p className="warning-message w-[25rem] m-0 m-auto bg-red-500 text-white flex justify-center items-center rounded-lg animate-fadeIn  whitespace-pre-wrap">{String(error).replace('; ', '\n')}</p>
+              : ""
+          }
       </div>
     </>
   )

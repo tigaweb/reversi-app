@@ -22,7 +22,7 @@ export const signUp = createAsyncThunk(
       return signUpResponse.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const errorMessage = error.response?.data?.message || 'Something went wrong';
+        const errorMessage = error.response?.data || 'Something went wrong';
         throw new Error(errorMessage);
       }
     }
@@ -46,7 +46,7 @@ export const logIn = createAsyncThunk(
       return logInResponse.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const errorMessage = error.response?.data?.message || 'Something went wrong';
+        const errorMessage = error.response?.data || 'Something went wrong';
         throw new Error(errorMessage);
       }
     }

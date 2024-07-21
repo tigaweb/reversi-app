@@ -13,6 +13,7 @@ type ITurnService interface {
 	GetBoardByTurnId(turn_id uint) (*model.Board, error)
 	FindResultByGameId(game_id uint) (model.GameResult, error)
 	FindMaxTurnCountByGameId(game_id uint) (model.Turn, error)
+	CheckParticipationByUserId(game_id uint, user_id uint) error
 }
 
 type turnService struct {
@@ -152,4 +153,11 @@ func (ts *turnService) FindMaxTurnCountByGameId(game_id uint) (model.Turn, error
 		return turn, err
 	}
 	return turn, nil
+}
+
+func (ts *turnService) CheckParticipationByUserId(game_id uint, user_id uint) error {
+	if err := ts.gu.CheckParticipationByUserId(game_id, user_id); err != nil {
+		return err
+	}
+	return nil
 }
